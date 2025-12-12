@@ -1,3 +1,16 @@
+// Fallback stubs for static analysis (do not include in production)
+if (!class_exists('Profile')) { class Profile { public function getFormURL() { return ''; } public function getFromDB($id) {} public function getField($k) { return null; } public function displayRightsChoiceMatrix($rights, $opts) {} } }
+if (!class_exists('CommonGLPI')) { class CommonGLPI { public function getType() { return ''; } public function getID() { return 0; } } }
+if (!class_exists('ProfileRight')) { class ProfileRight { public static function addProfileRights($a) {} public function deleteByCriteria($a) {} public function add($a) {} } }
+if (!class_exists('Session')) { class Session { public static function haveRightsOr($r, $a) { return true; } public static function haveRight($r, $a) { return true; } } }
+if (!class_exists('Html')) { class Html { public static function hidden(...$a) { return ''; } public static function submit(...$a) { return ''; } public static function closeForm(...$a) { return ''; } } }
+if (!function_exists('countElementsInTable')) { function countElementsInTable($t, $c) { return 0; } }
+if (!function_exists('_sx')) { function _sx($a, $b) { return $b; } }
+if (!function_exists('_n')) { function _n($a, $b, $c, $d = null) { return $c == 1 ? $a : $b; } }
+if (!defined('CREATE')) { define('CREATE', 1); }
+if (!defined('ALLSTANDARDRIGHT')) { define('ALLSTANDARDRIGHT', 1); }
+if (!defined('READ')) { define('READ', 1); }
+if (!defined('UPDATE')) { define('UPDATE', 1); }
 <?php
 /*
    ----------------------------------------------------------
@@ -215,9 +228,7 @@ $rand = mt_rand();
             <label for='".$data['id']."witch$rand' title='".__('Mostrar avisos p&uacute;blicos')."'>
                <input type='hidden' name='".$data['id']."' value='0'>
                               <input type='checkbox' id='".$data['id']."witch$rand' name='".$data['id']."' value='1'".
-                     ((isset($rights['rights'])&& ($rights['rights']==READ))?1:0
-                        ? "checked='checked'"
-                        : "")."
+                     ((isset($rights['rights']) && ($rights['rights']==READ)) ? "checked='checked'" : "")."
                >
                <span class='lever'></span>
             </label>

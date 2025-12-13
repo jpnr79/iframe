@@ -1,0 +1,37 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined static method Toolbox\:\:getItemTypeSearchURL\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 3
+			path: front/iframe.form.php
+
+		-
+			message: '#^File begins with UTF\-8 BOM character\. This may cause problems when running the code in the web browser\.$#'
+			identifier: whitespace.bom
+			count: 1
+			path: front/profile.form.php
+
+		-
+			message: '#^Call to an undefined static method Toolbox\:\:logInFile\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 2
+			path: hook.php
+
+		-
+			message: '#^Path in include_once\(\) "\.\./\.\./\.\./plugins/iframe/inc/profile\.class\.php" is not a file or it does not exist\.$#'
+			identifier: includeOnce.fileNotFound
+			count: 2
+			path: hook.php
+
+		-
+			message: '#^Call to an undefined static method Html\:\:showColorField\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: inc/iframe.class.php
+
+		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./plugins/iframe/inc/function\.iframe\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: setup.php

@@ -1,3 +1,5 @@
+<?php
+if (PHP_SAPI === 'cli') {
 // Fallback stubs for static analysis (do not include in production)
 if (!class_exists('Profile')) { class Profile { public function getFormURL() { return ''; } public function getFromDB($id) {} public function getField($k) { return null; } public function displayRightsChoiceMatrix($rights, $opts) {} } }
 if (!class_exists('CommonGLPI')) { class CommonGLPI { public function getType() { return ''; } public function getID() { return 0; } } }
@@ -11,6 +13,8 @@ if (!defined('CREATE')) { define('CREATE', 1); }
 if (!defined('ALLSTANDARDRIGHT')) { define('ALLSTANDARDRIGHT', 1); }
 if (!defined('READ')) { define('READ', 1); }
 if (!defined('UPDATE')) { define('UPDATE', 1); }
+}
+?>
 <?php
 /*
    ----------------------------------------------------------
@@ -166,11 +170,17 @@ class PluginIframeProfile extends Profile {
             ProfileRight::addProfileRights(array($data['field']));
          }
       }
-      foreach ($DB->request("SELECT *
-                           FROM `glpi_profilerights` 
-                           WHERE `profiles_id`='".$_SESSION['glpiactiveprofile']['id']."' 
-                              AND `name` LIKE '%plugin_iframe%'") as $prof) {
-         $_SESSION['glpiactiveprofile'][$prof['name']] = $prof['rights']; 
+      $criteria = [
+         'profiles_id' => $_SESSION['glpiactiveprofile']['id'],
+         // 'name' => ['LIKE', '%plugin_iframe%'] // LIKE not supported in criteria, so filter after fetch
+      ];
+      foreach ($DB->request([
+         'FROM' => 'glpi_profilerights',
+         'WHERE' => $criteria
+      ]) as $prof) {
+         if (strpos($prof['name'], 'plugin_iframe') !== false) {
+            $_SESSION['glpiactiveprofile'][$prof['name']] = $prof['rights'];
+         }
       }
    }
 
@@ -214,7 +224,10 @@ class PluginIframeProfile extends Profile {
                 FROM `glpi_profiles`
                 ORDER BY `name`";
 
-      foreach ($DB->request($query) as $data) {
+      foreach ($DB->request([
+         'FROM' => 'glpi_profiles',
+         'ORDER' => 'name'
+      ]) as $data) {
 		  
 		  $permisos = "select rights from glpi_profilerights
 					   where name='plugin_iframe_iframes_".$iframe_id ."' 

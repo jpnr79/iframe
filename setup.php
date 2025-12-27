@@ -9,7 +9,13 @@
 
    ----------------------------------------------------------
  */
-include (GLPI_ROOT."/plugins/iframe/inc/function.iframe.php");
+if (is_readable(__DIR__ . '/inc/function.iframe.php')) {
+   include_once(__DIR__ . '/inc/function.iframe.php');
+} else {
+   if (defined('GLPI_ROOT')) {
+      @include_once(GLPI_ROOT."/plugins/iframe/inc/function.iframe.php");
+   }
+}
 
 // Init the hooks of the plugins -Needed
 function plugin_init_iframe() {

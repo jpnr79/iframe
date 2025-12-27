@@ -10,7 +10,14 @@
    ----------------------------------------------------------
  */
 
- include_once(GLPI_ROOT. "/plugins/iframe/inc/profile.class.php");
+ if (is_readable(__DIR__ . '/inc/profile.class.php')) {
+   include_once(__DIR__ . '/inc/profile.class.php');
+} else {
+   // Fallback to GLPI_ROOT-based path if available
+   if (defined('GLPI_ROOT')) {
+      @include_once(GLPI_ROOT . "/plugins/iframe/inc/profile.class.php");
+   }
+}
  
 function plugin_iframe_postinit() {
     
@@ -25,7 +32,13 @@ function plugin_iframe_install() {
 
    Toolbox::logInFile("iframe", "Plugin installation\n");
    
-   include_once (GLPI_ROOT."/plugins/iframe/inc/profile.class.php");
+   if (is_readable(__DIR__ . '/inc/profile.class.php')) {
+      include_once(__DIR__ . '/inc/profile.class.php');
+   } else {
+      if (defined('GLPI_ROOT')) {
+         @include_once (GLPI_ROOT."/plugins/iframe/inc/profile.class.php");
+      }
+   }
       
   PluginIframeProfile::initProfile();
   PluginIframeProfile::createFirstAccess($_SESSION['glpiactiveprofile']['id']);

@@ -12,7 +12,13 @@
  
 define('GLPI_ROOT', '../../..');
 include (GLPI_ROOT."/inc/includes.php");
-include_once (GLPI_ROOT."/plugins/iframe/inc/profile.class.php");
+if (is_readable(__DIR__ . '/../inc/profile.class.php')) {
+   include_once(__DIR__ . '/../inc/profile.class.php');
+} else {
+   if (defined('GLPI_ROOT')) {
+      @include_once (GLPI_ROOT."/plugins/iframe/inc/profile.class.php");
+   }
+}
 
 Session::checkRight("profile",CREATE);
 $prof=new PluginIframeProfile();

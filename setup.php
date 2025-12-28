@@ -31,7 +31,8 @@ function plugin_init_iframe() {
    $PLUGIN_HOOKS['config_page']['iframe'] = 'front/config.php';   
    
    $Plugin = new Plugin();
-   if ($Plugin->isActivated('iframe')) {
+   $is_activated = method_exists($Plugin, 'isActivated') ? $Plugin->isActivated('iframe') : true;
+   if ($is_activated) {
 
 	  // Registro de clases
   
@@ -73,8 +74,13 @@ function plugin_version_iframe() {
 // Optional : check prerequisites before install : may print errors or add to message after redirect
 function plugin_iframe_check_prerequisites() {
 
-   // GLPI must be at least 0.84 ...
-   if (version_compare(GLPI_VERSION,'9.1','lt')) {
+   // GLPI must be at least 9.1 ...
+   $glpi_version = '0.0.0';
+   $version_file = defined('GLPI_ROOT') ? GLPI_ROOT . '/version' : __DIR__ . '/../../../version';
+   if (file_exists($version_file)) {
+      $glpi_version = trim(file_get_contents($version_file));
+   }
+   if (version_compare($glpi_version, '9.1', '<')) {
       echo "This plugin requires GLPI >= 9.1";
       return false;
    }

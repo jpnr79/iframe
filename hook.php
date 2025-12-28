@@ -30,7 +30,17 @@ function plugin_iframe_postinit() {
 function plugin_iframe_install() {
    global $DB;
 
-   Toolbox::logInFile("iframe", "Plugin installation\n");
+   // Robust error logging for install
+   $logmsg = "Plugin installation\n";
+   if (!class_exists('Toolbox') && defined('GLPI_ROOT') && file_exists(GLPI_ROOT . '/src/Toolbox.php')) {
+      require_once GLPI_ROOT . '/src/Toolbox.php';
+   }
+   if (class_exists('Toolbox') && method_exists('Toolbox', 'logInFile')) {
+      Toolbox::logInFile('iframe', $logmsg);
+   } else if (defined('GLPI_ROOT')) {
+      $logfile = GLPI_ROOT . '/files/_log/iframe-error.log';
+      @file_put_contents($logfile, $logmsg."\n", FILE_APPEND);
+   }
    
    if (is_readable(__DIR__ . '/inc/profile.class.php')) {
       include_once(__DIR__ . '/inc/profile.class.php');
@@ -51,7 +61,18 @@ function plugin_iframe_install() {
 			$fichero_install = GLPI_ROOT . '/plugins/iframe/sql/install.sql';
 			if (file_exists($fichero_install)){
 				Session::addMessageAfterRedirect("<strong><font color='green'>Ejecutando fichero: </font><font size='2.5 px'; style='font-style: oblique;' color='#1d05b5'>install.sql</font></strong><br>",true);
-				$DB->runFile($fichero_install);
+            if (method_exists($DB, 'runFile')) {
+               $DB->runFile($fichero_install);
+            } else {
+               // Fallback: try to execute SQL manually
+               $sql = file_get_contents($fichero_install);
+               if ($sql) {
+                  foreach (explode(';', $sql) as $query) {
+                     $query = trim($query);
+                     if ($query) $DB->query($query);
+                  }
+               }
+            }
 				Session::addMessageAfterRedirect("<strong><font color='#54850d'>Instalación realizado con Éxito</font><BR><BR>Plugin Iframe versión 1.0.0</strong><br>",true);
 			} else {
 				Session::addMessageAfterRedirect("<strong><font color='#993333'>Error: <br></font><font color='#ef091a'>- No existe el fichero: </font><font size='2.5 px'; style='font-style: oblique;' color='#1d05b5'>install.sql</font></strong><br>",true);
@@ -85,7 +106,17 @@ function plugin_iframe_uninstall() {
          $DB->query("DROP TABLE IF EXISTS `$table`");
       }   */
    
-   Toolbox::logInFile("iframe", "Plugin Uninstallation\n");
+   // Robust error logging for uninstall
+   $logmsg = "Plugin Uninstallation\n";
+   if (!class_exists('Toolbox') && defined('GLPI_ROOT') && file_exists(GLPI_ROOT . '/src/Toolbox.php')) {
+      require_once GLPI_ROOT . '/src/Toolbox.php';
+   }
+   if (class_exists('Toolbox') && method_exists('Toolbox', 'logInFile')) {
+      Toolbox::logInFile('iframe', $logmsg);
+   } else if (defined('GLPI_ROOT')) {
+      $logfile = GLPI_ROOT . '/files/_log/iframe-error.log';
+      @file_put_contents($logfile, $logmsg."\n", FILE_APPEND);
+   }
     
    return true;
 }

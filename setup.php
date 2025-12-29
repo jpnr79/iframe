@@ -75,12 +75,14 @@ function plugin_version_iframe() {
 function plugin_iframe_check_prerequisites() {
 
    // GLPI must be at least 9.1 ...
-   $glpi_version = '0.0.0';
+   $glpi_version = 'unknown';
    $version_file = defined('GLPI_ROOT') ? GLPI_ROOT . '/version' : __DIR__ . '/../../../version';
-   if (file_exists($version_file)) {
+   if (is_file($version_file)) {
       $glpi_version = trim(file_get_contents($version_file));
+   } elseif (defined('GLPI_VERSION')) {
+      $glpi_version = GLPI_VERSION;
    }
-   if (version_compare($glpi_version, '9.1', '<')) {
+   if ($glpi_version === 'unknown' || version_compare($glpi_version, '9.1', '<')) {
       echo "This plugin requires GLPI >= 9.1";
       return false;
    }
